@@ -1,10 +1,10 @@
 {
   "folders": [
     { "name": "alps-workspace", "path": "." },
-    { "name": "alps", "path": "alps-main" },
-    { "name": "ligandparam", "path": "ligandparam-main" },
-    { "name": "scission", "path": "scission-main" },
-    { "name": "ffpopt", "path": "ffpopt-main" }
+    { "name": "alps", "path": "alps" },
+    { "name": "ligandparam", "path": "ligandparam" },
+    { "name": "scission", "path": "scission" },
+    { "name": "ffpopt", "path": "ffpopt" }
   ],
   "settings": {
     "git.detectSubmodules": true,
