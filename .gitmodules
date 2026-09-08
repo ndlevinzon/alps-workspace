@@ -1,0 +1,12 @@
+[submodule "alps-main"]
+	path = alps-main
+	url = https://github.com/ndlevinzon/alps.git
+[submodule "ligandparam-main"]
+	path = ligandparam-main
+	url = https://github.com/ndlevinzon/ligandparam.git
+[submodule "scission-main"]
+	path = scission-main
+	url = https://github.com/ndlevinzon/scission.git
+[submodule "ffpopt-main"]
+	path = ffpopt-main
+	url = https://github.com/ndlevinzon/ffpopt.git
