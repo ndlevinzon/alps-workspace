@@ -12,6 +12,22 @@ ligandparam, scission, and ffpopt; each subdirectory is its own git repo.
 
 Open `alps.code-workspace` in Cursor/VS Code so each repo is a named git root.
 
+## Documentation
+
+Combined Sphinx API reference for all four packages lives in this repo
+(`docs/`), not in the individual tool checkouts.
+
+```bash
+pip install -r docs/requirements.txt
+cd docs
+python gen_api.py
+sphinx-build -b html . _build/html
+```
+
+Open `docs/_build/html/index.html`. Re-run `python gen_api.py` after adding
+or renaming modules. Developer guide, design notes, and tutorials are
+stubbed under `docs/guide/` for later.
+
 ## Two-push workflow
 
 1. Commit and push inside the tool you edited.

@@ -1,0 +1,10 @@
+/* Wrap long signatures and tables on the RTD theme. */
+.wy-nav-content {
+    max-width: 1200px;
+}
+
+.rst-content pre.literal-block,
+.rst-content div[class^="highlight"] pre,
+.rst-content .sig {
+    overflow-x: auto;
+}

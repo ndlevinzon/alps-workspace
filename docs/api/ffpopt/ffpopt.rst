@@ -1,0 +1,5 @@
+ffpopt
+======
+
+.. automodule:: ffpopt
+
