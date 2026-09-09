@@ -14,8 +14,11 @@ Open `alps.code-workspace` in Cursor/VS Code so each repo is a named git root.
 
 ## Documentation
 
+[![Documentation Status](https://readthedocs.org/projects/alps-workspace/badge/?version=latest)](https://alps-workspace.readthedocs.io/en/latest/)
+
 Combined Sphinx API reference for all four packages lives in this repo
-(`docs/`), not in the individual tool checkouts.
+(`docs/`), not in the individual tool checkouts. Hosted build:
+[alps-workspace.readthedocs.io](https://alps-workspace.readthedocs.io/en/latest/).
 
 ```bash
 pip install -r docs/requirements.txt
@@ -27,6 +30,13 @@ sphinx-build -b html . _build/html
 Open `docs/_build/html/index.html`. Re-run `python gen_api.py` after adding
 or renaming modules. Developer guide, design notes, and tutorials are
 stubbed under `docs/guide/` for later.
+
+Read the Docs clones this repo with all four Git submodules (see
+`.readthedocs.yaml`) and regenerates the automodule pages before Sphinx
+runs. Import the GitHub project at [readthedocs.org](https://readthedocs.org/)
+with slug `alps-workspace` so the badge URL matches. First build: connect
+the GitHub app, confirm submodules are public, then trigger a build on
+`main`.
 
 ## Two-push workflow
 

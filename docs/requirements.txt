@@ -1,2 +1,15 @@
-sphinx>=7
-sphinx_rtd_theme
+# Sphinx + theme (local builds and Read the Docs)
+sphinx>=7,<9
+sphinx_rtd_theme>=2.0
+
+# Importable without AmberTools / ML stacks. Heavy optional deps
+# (rdkit, parmed, MDAnalysis, geometric, tblite, ...) are mocked in
+# docs/conf.py when missing so autodoc still runs on Read the Docs.
+numpy>=1.26,<2
+scipy
+matplotlib
+pandas
+ase
+pyyaml>=6.0
+networkx>=3.0
+typing_extensions

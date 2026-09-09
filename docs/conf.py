@@ -4,11 +4,77 @@ from __future__ import annotations
 
 import importlib
 import importlib.util
+import os
 import sys
 from pathlib import Path
 
 _DOCS = Path(__file__).resolve().parent
 _WORKSPACE = _DOCS.parent
+
+# ---------------------------------------------------------------------------
+# Optional science / ML stacks: mock before importing the four packages so
+# Read the Docs (no AmberTools, no CMake ffpopt) can still autodoc.
+# ---------------------------------------------------------------------------
+
+_OPTIONAL_IMPORTS = [
+    "rdkit",
+    "parmed",
+    "geometric",
+    "jax",
+    "jaxlib",
+    "tblite",
+    "xtb",
+    "deepmd",
+    "deepmd.infer",
+    "torch",
+    "torchvision",
+    "torchani",
+    "mace",
+    "mace.calculators",
+    "aimnet",
+    "openbabel",
+    "openff",
+    "openff.toolkit",
+    "ndfes",
+    "nispo",
+    "MDAnalysis",
+    "psi4",
+    "sander",
+    "pysander",
+    "fennol",
+    "fennol.ase",
+    "cuequivariance",
+    "fairchem",
+    "orb_models",
+    "dgl",
+    "espaloma_charge",
+    "tensorflow",
+    "netCDF4",
+    "pytraj",
+    "cpptraj",
+    "openmm",
+]
+
+
+def _mock_if_missing(names: list[str]) -> list[str]:
+    missing: list[str] = []
+    for name in names:
+        try:
+            importlib.import_module(name)
+        except Exception:
+            missing.append(name)
+    return missing
+
+
+autodoc_mock_imports = list(_OPTIONAL_IMPORTS) if os.environ.get("READTHEDOCS") == "True" else _mock_if_missing(_OPTIONAL_IMPORTS)
+if autodoc_mock_imports:
+    from sphinx.ext.autodoc.mock import MockFinder
+
+    for name in autodoc_mock_imports:
+        for key in list(sys.modules):
+            if key == name or key.startswith(name + "."):
+                sys.modules.pop(key, None)
+    sys.meta_path.insert(0, MockFinder(list(autodoc_mock_imports)))
 
 # ---------------------------------------------------------------------------
 # Make the four packages importable from this workspace checkout
@@ -34,7 +100,11 @@ def _bind_flat_package(name: str, root: Path) -> None:
         return
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
-    spec.loader.exec_module(module)
+    try:
+        spec.loader.exec_module(module)
+    except Exception as exc:
+        sys.modules.pop(name, None)
+        print(f"docs: skip import {name} from {root}: {exc}", file=sys.stderr)
 
 
 def _sibling(name: str) -> Path | None:
@@ -44,16 +114,16 @@ def _sibling(name: str) -> Path | None:
     return None
 
 
-for _name in ("alps", "ligandparam", "scission"):
-    _root = _sibling(_name)
-    if _root is not None:
-        _bind_flat_package(_name, _root)
-
 _ffpopt = _sibling("ffpopt")
 if _ffpopt is not None:
     _lib = _ffpopt / "src" / "python" / "lib"
     if (_lib / "ffpopt" / "__init__.py").is_file():
         sys.path.insert(0, str(_lib))
+
+for _name in ("ligandparam", "scission", "alps"):
+    _root = _sibling(_name)
+    if _root is not None:
+        _bind_flat_package(_name, _root)
 
 try:
     import alps as _alps_pkg  # noqa: F401  # binds companions if not already
@@ -89,9 +159,10 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "gen_api.py"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "gen_api.py", "**/__pycache__"]
 source_suffix = {".rst": "restructuredtext"}
 root_doc = "index"
+language = "en"
 
 # ---------------------------------------------------------------------------
 # Autodoc: every function, class, and method (including undocumented)
@@ -125,57 +196,6 @@ napoleon_preprocess_types = True
 
 todo_include_todos = True
 
-
-def _mock_if_missing(names: list[str]) -> list[str]:
-    missing: list[str] = []
-    for name in names:
-        try:
-            importlib.import_module(name)
-        except Exception:
-            missing.append(name)
-    return missing
-
-
-autodoc_mock_imports = _mock_if_missing(
-    [
-        "rdkit",
-        "parmed",
-        "geometric",
-        "jax",
-        "jaxlib",
-        "tblite",
-        "xtb",
-        "deepmd",
-        "deepmd.infer",
-        "torch",
-        "torchvision",
-        "torchani",
-        "mace",
-        "mace.calculators",
-        "aimnet",
-        "openbabel",
-        "openff",
-        "openff.toolkit",
-        "ndfes",
-        "nispo",
-        "MDAnalysis",
-        "psi4",
-        "sander",
-        "pysander",
-        "fennol",
-        "fennol.ase",
-        "cuequivariance",
-        "fairchem",
-        "orb_models",
-        "dgl",
-        "espaloma_charge",
-        "tensorflow",
-        "netCDF4",
-        "pytraj",
-        "cpptraj",
-    ]
-)
-
 # ---------------------------------------------------------------------------
 # HTML
 # ---------------------------------------------------------------------------
@@ -191,7 +211,19 @@ html_theme_options = {
     "navigation_depth": 4,
     "includehidden": True,
     "titles_only": False,
+    "logo_only": False,
 }
+html_context = {
+    "display_github": True,
+    "github_user": "ndlevinzon",
+    "github_repo": "alps-workspace",
+    "github_version": "main",
+    "conf_py_path": "/docs/",
+}
+if os.environ.get("READTHEDOCS") == "True":
+    html_context["READTHEDOCS"] = True
+if os.environ.get("READTHEDOCS_CANONICAL_URL"):
+    html_baseurl = os.environ["READTHEDOCS_CANONICAL_URL"]
 
 # ---------------------------------------------------------------------------
 # Intersphinx

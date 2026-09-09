@@ -67,6 +67,8 @@ ligandparam or alps.
 Building these pages
 ---------------------
 
+Hosted on Read the Docs:
+https://alps-workspace.readthedocs.io/en/latest/
 
 From the workspace root (this repo, with the four package checkouts as
 submodules)::
@@ -80,4 +82,6 @@ On Windows, ``docs\make.bat html`` is equivalent. Open
 ``docs/_build/html/index.html``.
 
 ``gen_api.py`` refreshes one automodule page per Python module. Re-run it
-when you add or rename modules.
+when you add or rename modules. Read the Docs runs the same command from
+``.readthedocs.yaml`` on every build. AmberTools, rdkit, and the ffpopt
+CMake extension are not required: missing optional imports are mocked.
